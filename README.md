@@ -48,3 +48,9 @@ It is assumed that the limb of the Earth is a straight line. This simplification
 ## Simulation
 
 Output from the thermal camera will be represented as an array of pixels. The size of the image will be 16x12 pixels, which matches the size of the image from [MLX90641](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90641) thermal camera. This resolution should be sufficient to determine the satellite's orientation with accuracy of several degrees, which is enough for the satellite to be properly oriented towards the Earth.
+
+### Potential issue with clouds
+
+If the Earth is covered with clouds, the algorithm may not work properly. The clouds may be mistaken for the sky, as their temperature as visible in the infrared range may be lower than the lowest temperature measurable by the camera. This problem is described in a [NASA report from 1969](https://ntrs.nasa.gov/api/citations/19700026254/downloads/19700026254.pdf).
+
+To mitigate this issue, image from the camera could be passed through an image processing algorithm that could detect clouds and mask them out. One of the methods to achieve such filtering would be [morphological operations](https://en.wikipedia.org/wiki/Mathematical_morphology) on the image, attempting to remove small objects (clouds) and keep only the largest ones, which would be the Earth's surface and the sky.
