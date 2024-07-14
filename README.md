@@ -9,17 +9,13 @@ To run: `node index.js`
 
 ## Convention of the axes and satellite sides
 
-TODO: add a diagram of the satellite, axes and sides, and the camera placement
+The axes and sides convention is taken from [CubeSat specification](https://www.nasa.gov/wp-content/uploads/2018/01/cubesatdesignspecificationrev14_12022-02-09.pdf). The following diagram shows the used axes convention:
+
+![satellite sides](/satellite-sides.svg)
 
 The satellite is assumed to be cube-shaped. The axes are named X, Y, Z. The algorithm is intended to keep the Z axis pointing towards the zenith, but does not control the rotation around the Z axis.
 
 The satellite sides are named X+, X-, Y+, Y-, Z+, Z-. The Z+ side is intended to point towards the zenith, and the Z- side is intended to point towards nadir (towards the Earth center). Thermal cameras are placed on the X+, Y+, X- and Y- sides of the satellite, and should see both the Earth's surface and the sky. It's unimportant how the satellite is rotated in the Z axis, as long as the Z+ side is pointing towards the zenith.
-
-If a camera mounted on the X+ side sees imbalance in the (UL+UR)-(LL+LR) value, it means that the satellite needs to be rotated in the Y axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+LR)-(UR+LL) value.
-
-Similarly, if a camera mounted on the X+ side sees imbalance in the (UL+LR)-(UR+LL) value, it means that the satellite needs to be rotated in the X axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+UR)-(LL+LR) value.
-
-If the camera is mounted on the X+ or X- side, the axis perpendicular to the camera view is the Y axis, and the axis parallel to the camera view is the X axis.
 
 ## Attitude determination algorithm
 
@@ -35,9 +31,17 @@ The algorithm for determining the satellite's orientation will be as follows:
 
 Then, the orientation of the satellite determined by the algorithm can be used to adjust the satellite's orientation using reaction wheels, magnetic torquers, or other means.
 
+### Algorithm results by axis
+
+If a camera mounted on the X+ side sees imbalance in the (UL+UR)-(LL+LR) value, it means that the satellite needs to be rotated in the Y axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+LR)-(UR+LL) value.
+
+Similarly, if a camera mounted on the X+ side sees imbalance in the (UL+LR)-(UR+LL) value, it means that the satellite needs to be rotated in the X axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+UR)-(LL+LR) value.
+
+If the camera is mounted on the X+ or X- side, the axis perpendicular to the camera view is the Y axis, and the axis parallel to the camera view is the X axis.
+
 ### Multiple cameras
 
-This way, while in principle only one of the cameras is needed to determine and adjust the satellite's orientation, multiple cameras can be used to improve accuracy of the algorithm and robustness against sunlight, noise and cloud cover, and provide redundancy in case of a camera failure.
+While in principle only one of the cameras is needed to determine and adjust the satellite's orientation, multiple cameras can be used to improve accuracy of the algorithm and robustness against sunlight, noise and cloud cover, and provide redundancy in case of a camera failure.
 
 Direction towards the Sun can be determined using photodiode-based Sun sensors, or by measuring output voltage of the solar panels on each side of the satellite. The view from a camera mounted on a side of the satellite facing the Sun should be ignored, as the sunlight would cause the image to be saturated.
 
@@ -62,6 +66,8 @@ Such a modification could be useful e.g. for an Earth observation satellite that
 If the Earth is covered with clouds, the algorithm may not work properly. The clouds may be mistaken for the sky, as their temperature as visible in the infrared range may be lower than the lowest temperature measurable by the camera. This problem is described in a [NASA report from 1969](https://ntrs.nasa.gov/api/citations/19700026254/downloads/19700026254.pdf).
 
 To mitigate this issue, image from the camera could be passed through an image processing algorithm that could detect clouds and mask them out. One of the methods to achieve such filtering would be [morphological operations](https://en.wikipedia.org/wiki/Mathematical_morphology) on the image, attempting to remove small dark objects (clouds) from the bright background (Earth's thermal radiation).
+
+Also, the data from a thermal camera can be combined with data from a visible light camera, capable of seeing Earth's shape without clouds being identified as the sky, but only the sunlit half of the planet
 
 ### Filtering
 

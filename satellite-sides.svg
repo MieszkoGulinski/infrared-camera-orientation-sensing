@@ -1,0 +1,56 @@
+<svg version="1.1" width="750" height="750" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker
+      id="arrowhead"
+      viewBox="0 0 10 10"
+      refX="5"
+      refY="5"
+      markerWidth="10"
+      markerHeight="10"
+      orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="lightgray"/>
+    </marker>
+  </defs>
+
+  <g fill="transparent" stroke="black">
+    <path d="M 0 200 L 300 0 L 600 200 L 300 400 Z"/>
+    <path d="M 0 200 L 0 550 L 300 750 L 600 550 L 600 200" />
+    <path d="M 300 750 L 300 400" />
+  </g>
+
+  <line
+    x1="300"
+    y1="200"
+    x2="300"
+    y2="50"
+    stroke="lightgray"
+    marker-end="url(#arrowhead)"
+  />
+  <line
+    x1="150"
+    y1="500"
+    x2="0"
+    y2="600"
+    stroke="lightgray"
+    marker-end="url(#arrowhead)"
+  />
+  <line
+    x1="450"
+    y1="500"
+    x2="600"
+    y2="600"
+    stroke="lightgray"
+    marker-end="url(#arrowhead)"
+  />
+
+  <g fill="black" stroke="black">
+    <text x="300" y="200" font-size="40" text-anchor="middle" dominant-baseline="middle">Z+</text>
+    <text x="150" y="500" font-size="40" text-anchor="middle" dominant-baseline="middle">X+</text>
+    <text x="450" y="500" font-size="40" text-anchor="middle" dominant-baseline="middle">Y+</text>
+  </g>
+  <g fill="lightgray" stroke="lightgray">
+    <text x="300" y="125" font-size="20" text-anchor="middle" dominant-baseline="middle">Z axis</text>
+    <text x="75" y="550" font-size="20" text-anchor="middle" dominant-baseline="middle">X axis</text>
+    <text x="525" y="550" font-size="20" text-anchor="middle" dominant-baseline="middle">Y axis</text>
+  </g>
+</svg>
