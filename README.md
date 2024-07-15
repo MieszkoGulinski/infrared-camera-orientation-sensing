@@ -17,6 +17,8 @@ The satellite is assumed to be cube-shaped. The axes are named X, Y, Z. The algo
 
 The satellite sides are named X+, X-, Y+, Y-, Z+, Z-. The Z+ side is intended to point towards the zenith, and the Z- side is intended to point towards nadir (towards the Earth center). Thermal cameras are placed on the X+, Y+, X- and Y- sides of the satellite, and should see both the Earth's surface and the sky. It's unimportant how the satellite is rotated in the Z axis, as long as the Z+ side is pointing towards the zenith.
 
+If the camera is mounted on the X+ or X- side, the axis perpendicular to the camera view is the Y axis, and the axis parallel to the camera view is the X axis.
+
 ## Attitude determination algorithm
 
 The algorithm for determining the satellite's orientation will be as follows:
@@ -29,15 +31,35 @@ The algorithm for determining the satellite's orientation will be as follows:
 6. (UL+UR)-(LL+LR) is calculated. If it's zero, the satellite is oriented correctly in the axis parallel to Earth and perpendicular to the direction of camera view. If it's positive, the satellite is oriented too much towards the Earth's surface, and if it's negative, the satellite is oriented too much towards the sky, as viewed by the camera.
 7. (UL+LR)-(UR+LL) is calculated. If it's zero, the satellite is oriented correctly in the axis parallel to Earth going towards the direction of camera view. If it's positive, the satellite is tilted counterclockwise, and if it's negative, the satellite is tilted too much clockwise from the camera viewpoint.
 
+The value of imbalances determine the angle by which the satellite needs to be rotated to achieve the desired attitude.
+
 Then, the orientation of the satellite determined by the algorithm can be used to adjust the satellite's orientation using reaction wheels, magnetic torquers, or other means.
 
-### Algorithm results by axis
+### Detailed description of how the algorithm works
 
-If a camera mounted on the X+ side sees imbalance in the (UL+UR)-(LL+LR) value, it means that the satellite needs to be rotated in the Y axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+LR)-(UR+LL) value.
+When a satellite is oriented so that its Z- axis points towards the nadir, and the satellite doesn't need to be rotated, cameras installed on X+, X-, Y+ and Y- will see the sky in the upper half of the image, and Earth in the lower half of the image:
 
-Similarly, if a camera mounted on the X+ side sees imbalance in the (UL+LR)-(UR+LL) value, it means that the satellite needs to be rotated in the X axis. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+UR)-(LL+LR) value.
+![satellite sides](/view-balanced.svg)
 
-If the camera is mounted on the X+ or X- side, the axis perpendicular to the camera view is the Y axis, and the axis parallel to the camera view is the X axis.
+In such case, the upper half of the image shows only sky, and the lower half shows only the Earth. The count of "invalid" pixels - pixels that should show Earth but should show sky, or vice versa - is zero.
+
+When a satellite is rotated in the Y axis relative to the desired attitude, a camera onboard the satellite located on the X+ or X- side sees an image where the horizon is not tilted, but is moved upwards or downwards. On the following image, the area consisting of invalid pixels - Earth visible in the upper half of the image - is marked with a red dashed line:
+
+![satellite sides](/view-unbalanced-up-down.svg)
+
+The invalid pixels are seen in the upper left (UL) and upper right (UR) quadrants of the image. In this case, the value of (UL+UR)-(LL+LR) is positive.
+
+Similarly, if the camera in the same location sees that there's sky visible in the lower half of the image, the invalid pixels will appear in the lower left (LL) and lower right (LR) quadrants of the image, so (UL+UR)-(LL+LR) will be negative.
+
+That's why, if a camera mounted on the X+ side sees imbalance in the (UL+UR)-(LL+LR) value, it means that the satellite needs to be rotated in the Y axis, and the sign of the imbalance determines the direction in which it should be rotated. At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+LR)-(UR+LL) value.
+
+If a satellite is rotated in the X axis relative to the desired attitude, but not in the Y axis, a camera located on the X+ side of the satellite will see tilted horizon, like that:
+
+![satellite sides](/view-unbalanced-left-right.svg)
+
+The areas that will be counted as invalid pixels are also marked with a red dashed line. In this case, these areas are in the lower left (LL) and upper right (UR) quadrants of the image, so the value of (UL+LR)-(UR+LL) is negative. If the satellite was rotated in the opposite direction, the value of (UL+LR)-(UR+LL) would be positive. In this case, the satellite needs to be rotated in te X axis, and the sign of the imbalance determine the rotation direction.
+
+At the same time, the camera mounted on the X- side should see the same imbalance, but with the opposite sign, and the cameras mounted on the Y+ and Y- sides should see imbalance in the (UL+UR)-(LL+LR) value.
 
 ### Multiple cameras
 
