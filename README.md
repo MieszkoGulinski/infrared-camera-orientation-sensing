@@ -89,13 +89,15 @@ If the Earth is covered with clouds, the algorithm may not work properly. The cl
 
 To mitigate this issue, image from the camera could be passed through an image processing algorithm that could detect clouds and mask them out. One of the methods to achieve such filtering would be [morphological operations](https://en.wikipedia.org/wiki/Mathematical_morphology) on the image, attempting to remove small dark objects (clouds) from the bright background (Earth's thermal radiation).
 
-Also, the data from a thermal camera can be combined with data from a visible light camera, capable of seeing Earth's shape without clouds being identified as the sky, but only the sunlit half of the planet
+Also, the data from a thermal camera can be combined with data from a visible light camera, capable of seeing Earth's shape without clouds being identified as the sky, but only the sunlit half of the planet.
 
 ### Filtering
 
 The algorithm can be improved by filtering the image before processing it. Because of cosmic rays, the image may contain salt-and-pepper noise, which can be removed by a median filter. To remove clouds from image of the Earth, a morphological filter can be used.
 
 A morphological filter can work by applying morphological [closing](<https://en.wikipedia.org/wiki/Closing_(morphology)>) of the binary image where the sky is marked as 0 and the Earth is marked as 1. Closing is a combination of dilation followed by erosion. This operation removes small dark (0) objects from the bright (1) background, which in this case would be clouds.
+
+While morphological [opening](https://en.wikipedia.org/wiki/Opening_(morphology)) of the binary image can be used to remove small items such as the Sun or the Moon, it may turn out to be unnecessaety. Sunlight may be so strong that it could cause the whole image to be unusable, so it may be necessary to switch to a camera on a different side of the satellite, where the Sun would be invisible anyway.
 
 ## Simulation
 
